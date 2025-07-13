@@ -21,6 +21,7 @@ impl BasicRSInterpreter {
     }
     
     pub fn set_coverage_file(&mut self, coverage_file: Option<String>) {
+        println!("🔍 Setting coverage file: {:?}", coverage_file);
         self.coverage_file = coverage_file;
     }
     
@@ -38,14 +39,18 @@ impl Interpreter for BasicRSInterpreter {
         let mut args = vec![program_path];
         
         // Add coverage arguments if specified
-        if let Some(ref coverage_file) = self.coverage_file {
-            args.push("--coverage-file");
-            args.push(coverage_file);
-        }
+        let coverage_file = self.coverage_file.as_deref().unwrap_or("coverage.json");
+        args.push("--coverage-file");
+        args.push(coverage_file);
+        println!("🔍 Coverage file set to: {}", coverage_file);
+        println!("🔍 Full coverage path: {}", std::path::Path::new(coverage_file).canonicalize().unwrap_or_else(|_| coverage_file.into()).display());
         
         if self.reset_coverage {
             args.push("--reset-coverage");
+            println!("🔍 Coverage reset enabled");
         }
+        
+        println!("🔍 BasicRS command: {} {:?}", self.basicrs_path, args);
         
         // Launch the BasicRS interpreter with the program and arguments
         self.subprocess.spawn_process(&self.basicrs_path, &args).await?;
