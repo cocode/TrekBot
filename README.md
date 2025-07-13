@@ -2,7 +2,7 @@
 TrekBot is a tool to exercise the vintage computer game 'superstartrek'. It acts
 as a player, and plays repeated games to exercise all corners of the game. 
 
-TrekBot is part of the TrekBasic family of BASIC code. 
+TrekBot is part of the TrekBasic family of BASIC programming tools.
 * TrekBasic - Python version
 * TrekBasicJ - Java Version
 * BasicRS - Rust version
