@@ -260,6 +260,11 @@ pub fn is_game_prompt(line: &str) -> bool {
         return false;
     }
     
+    // Skip other computer command direction headers
+    if line.contains("FROM ENTERPRISE TO STARBASE") {
+        return false;
+    }
+    
     // Skip damage status messages that contain "ENTERPRISE" 
     if line.contains("UNIT HIT ON ENTERPRISE") {
         return false;
