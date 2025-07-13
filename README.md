@@ -1,4 +1,4 @@
-# TrekBot
+# <img src="images/LogoTrans.png" alt="Logo" width="50" height="25"> TrekBot
 TrekBot is a tool to exercise the vintage computer game 'superstartrek'. It acts
 as a player, and plays repeated games to exercise all corners of the game. 
 
