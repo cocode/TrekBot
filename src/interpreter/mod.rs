@@ -280,6 +280,14 @@ pub fn is_game_prompt(line: &str) -> bool {
         return false;
     }
     
+    // Skip standalone "ENERGY AVAILABLE" error messages (but not shield/phaser prompts)
+    if line.contains("ENERGY AVAILABLE =") && 
+       !line.contains("NUMBER OF UNITS TO FIRE") && 
+       !line.contains("NUMBER OF UNITS TO SHIELDS") &&
+       !line.contains("?") {
+        return false;
+    }
+    
     // Check for exact matches or contains
     for prompt in GAME_PROMPTS {
         if line.contains(prompt) || line.ends_with(prompt) {
