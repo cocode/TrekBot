@@ -260,6 +260,21 @@ pub fn is_game_prompt(line: &str) -> bool {
         return false;
     }
     
+    // Skip damage status messages that contain "ENTERPRISE" 
+    if line.contains("UNIT HIT ON ENTERPRISE") {
+        return false;
+    }
+    
+    // Skip game-over messages
+    if line.contains("THE ENTERPRISE HAS BEEN DESTROYED") {
+        return false;
+    }
+    
+    // Skip phaser targeting status messages
+    if line.contains("PHASERS LOCKED ON TARGET") {
+        return false;
+    }
+    
     // Check for exact matches or contains
     for prompt in GAME_PROMPTS {
         if line.contains(prompt) || line.ends_with(prompt) {
