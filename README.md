@@ -6,7 +6,8 @@ TrekBot is part of the TrekBasic family of BASIC code.
 * TrekBasic - Python version
 * TrekBasicJ - Java Version
 * BasicRS - Rust version
-* BasicTestSuite - A test suite of BASIC Programs.
+* BasicTestSuite - A test suite of BASIC Programs
+* TrekBot - A tool to exercise the superstartrek program
 
 All versions are intended to by byte-by-byte compatible, but are not
 there yet - but they are close. TrekBot and BasicTestSuite are part of
