@@ -84,13 +84,40 @@ impl<I: Interpreter, S: Strategy> Player<I, S> {
             let command = self.strategy.get_command(&self.game_state)?;
             log::debug!("Sending command: {}", command);
             
+            // DEBUG: Check for blank commands and provide detailed info
+            if command.trim().is_empty() {
+                // Check if this is an expected blank command response
+                let current_prompt = self.game_state.get_current_prompt().unwrap_or("").trim();
+                let is_expected_blank = match current_prompt {
+                    "PLEASE ENTER" => true,
+                    "ENTER ONE OF THE FOLLOWING:" => true,
+                    p if p.contains("SHIELDS NOW AT") && p.contains("UNITS PER YOUR COMMAND") => true,
+                    p if p.contains("DEFLECTOR CONTROL ROOM REPORT") => true,
+                    p if p.contains("NOW ENTERING") && p.contains("QUADRANT") => true,
+                    _ => false,
+                };
+                
+                if !is_expected_blank {
+                    eprintln!("🚨 DEBUG: About to send blank command!");
+                    eprintln!("  Current prompt: {:?}", self.game_state.get_current_prompt());
+                    eprintln!("  Last 5 output lines:");
+                    for (i, line) in self.game_state.last_output.iter().rev().take(5).enumerate() {
+                        eprintln!("    -{}: {}", i+1, line);
+                    }
+                    eprintln!("  Game state: stardate={:?}, condition={:?}", 
+                              self.game_state.stardate, self.game_state.condition);
+                    eprintln!("  Strategy: {}", self.strategy.name());
+                    std::process::exit(1);
+                }
+            }
+            
             // Display command if output is enabled
             if self.display_output {
-                if command.trim().is_empty() {
-                    println!("🤖 TrekBot sends: [ENTER]");
-                } else {
+            //     if command.trim().is_empty() {
+            //         println!("🤖 TrekBot sends: [ENTER]");
+            //     } else {
                     println!("🤖 TrekBot sends: {}", command);
-                }
+                // }
             }
             
             // Send command to interpreter

@@ -7,17 +7,25 @@ use rand::Rng;
 /// This is similar to the original Python RandomStrategy but designed to be legal ~90% of the time
 pub struct RandomStrategy {
     rng: rand::rngs::ThreadRng,
+    first_turn: bool,
 }
 
 impl RandomStrategy {
     pub fn new() -> Self {
         Self {
             rng: rand::thread_rng(),
+            first_turn: true,
         }
     }
     
     /// Handle the main command prompt
     fn handle_command_prompt(&mut self, game_state: &GameState) -> Result<String> {
+        // // If this is the first turn, set shields to a random value between 0-1000
+        // if self.first_turn {
+        //     self.first_turn = false;
+        //     return Ok("SHE".to_string()); // Shield command
+        // }
+        //
         // Check if we're in a dangerous situation and need shields
         let is_dangerous = game_state.last_output.iter().any(|output| {
             output.contains("CONDITION RED") || 
@@ -70,7 +78,17 @@ impl RandomStrategy {
             3000
         };
         
-        // Be more defensive - put significant energy into shields
+        // Check if this looks like the initial shield setting (current shields are 0)
+        let current_shields = game_state.shields.unwrap_or(0);
+        
+        if current_shields == 0 {
+            // Initial shield setting - use random value between 0-1000, but don't exceed available energy
+            let max_initial_shields = std::cmp::min(1000, energy);
+            let units = self.rng.gen_range(0..=max_initial_shields);
+            return Ok(units.to_string());
+        }
+        
+        // Subsequent shield adjustments - be more defensive
         // Use 30-70% of available energy for shields
         let min_shields = (energy as f32 * 0.3) as i32;
         let max_shields = (energy as f32 * 0.7) as i32;
@@ -192,6 +210,11 @@ impl Strategy for RandomStrategy {
             "ENTER ONE OF THE FOLLOWING:" => {
                 // This is just a menu header, not a command prompt
                 // The game will show the menu and then prompt for COMMAND?
+                Ok("".to_string())
+            },
+            "PLEASE ENTER" => {
+                // This is just a print statement before the actual INPUT prompt
+                // The game will show this and then prompt for coordinates
                 Ok("".to_string())
             },
             
@@ -342,6 +365,11 @@ impl Strategy for RandomStrategy {
                 Ok("".to_string())
             }
             
+            // Header lines that precede the actual prompts - wait for real prompt
+            p if p.contains("PLEASE ENTER") => {
+                Ok("".to_string())
+            }
+            
             // Generic "?" prompt - couldn't determine context, just send Enter
             "?" => {
                 log::warn!("Generic '?' prompt with no detectable context, sending empty response");
@@ -356,7 +384,8 @@ impl Strategy for RandomStrategy {
     }
     
     fn reset(&mut self) {
-        // Nothing to reset for random strategy
+        // Reset first_turn flag for new game
+        self.first_turn = true;
     }
     
     fn name(&self) -> &'static str {

@@ -210,7 +210,7 @@ impl SubprocessInterpreter {
 
 /// Common prompts that indicate the game is waiting for input
 pub const GAME_PROMPTS: &[&str] = &[
-    "COMMAND",
+    "COMMAND?",  // Changed from "COMMAND" to be more specific
     "COURSE (0-9)",
     "WARP FACTOR",
     "PHOTON TORPEDO COURSE (1-9)",
@@ -242,6 +242,21 @@ pub fn is_game_prompt(line: &str) -> bool {
        line.contains("DAM  (FOR DAMAGE CONTROL REPORTS)") ||
        line.contains("COM  (TO CALL ON LIBRARY-COMPUTER)") ||
        line.contains("XXX  (TO RESIGN YOUR COMMAND)") {
+        return false;
+    }
+    
+    // Skip specific status messages that contain "ENTER" but are not prompts
+    if line.contains("NOW ENTERING") && line.contains("QUADRANT") {
+        return false;
+    }
+    
+    // Skip "PLEASE ENTER" - it's just a print statement before the real INPUT prompts
+    if line.contains("PLEASE ENTER") {
+        return false;
+    }
+    
+    // Skip computer command output headers
+    if line.contains("FROM ENTERPRISE TO KLINGON BATTLE CRUSER") {
         return false;
     }
     
