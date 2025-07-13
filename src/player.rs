@@ -84,6 +84,15 @@ impl<I: Interpreter, S: Strategy> Player<I, S> {
             let command = self.strategy.get_command(&self.game_state)?;
             log::debug!("Sending command: {}", command);
             
+            // Display command if output is enabled
+            if self.display_output {
+                if command.trim().is_empty() {
+                    println!("🤖 TrekBot sends: [ENTER]");
+                } else {
+                    println!("🤖 TrekBot sends: {}", command);
+                }
+            }
+            
             // Send command to interpreter
             self.interpreter.send_command(&command).await?;
             
