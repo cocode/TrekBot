@@ -129,7 +129,11 @@ impl RandomStrategy {
     
     /// Handle AYE prompt
     fn handle_aye_prompt(&mut self, _game_state: &GameState) -> Result<String> {
-        Ok("quit".to_string())
+        if self.rng.gen_bool(0.1) {
+            Ok("aye".to_string())
+        } else {
+            Ok("no".to_string())
+        }
     }
     
     /// Handle repair authorization prompt
