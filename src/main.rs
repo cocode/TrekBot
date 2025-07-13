@@ -14,6 +14,7 @@ use interpreter::{
 use player::{GameStats, Player};
 use strategy::{CheatStrategy, RandomStrategy};
 use std::fs;
+use std::time::Instant;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -215,6 +216,7 @@ async fn play_single_game(
     java_path: &Option<String>,
     trekbasicj_path: &Option<String>,
 ) -> Result<()> {
+    let start_time = Instant::now();
     match (interpreter_type, strategy_type) {
         (InterpreterType::BasicRS, StrategyType::Random) => {
             let interpreter = BasicRSInterpreter::new(basicrs_path.clone());
@@ -271,6 +273,9 @@ async fn play_single_game(
             println!("Game Result: {} ({})", result.description(), player.get_turn_count());
         }
     }
+    
+    let elapsed = start_time.elapsed();
+    println!("Total elapsed time: {:.2} seconds", elapsed.as_secs_f64());
     
     Ok(())
 }
