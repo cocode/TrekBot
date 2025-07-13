@@ -5,6 +5,8 @@ use super::{Interpreter, SubprocessInterpreter, is_game_prompt};
 pub struct BasicRSInterpreter {
     subprocess: SubprocessInterpreter,
     basicrs_path: String,
+    coverage_file: Option<String>,
+    reset_coverage: bool,
 }
 
 impl BasicRSInterpreter {
@@ -13,7 +15,17 @@ impl BasicRSInterpreter {
         Self {
             subprocess: SubprocessInterpreter::new(),
             basicrs_path: basicrs_path.unwrap_or(default_path),
+            coverage_file: None,
+            reset_coverage: false,
         }
+    }
+    
+    pub fn set_coverage_file(&mut self, coverage_file: Option<String>) {
+        self.coverage_file = coverage_file;
+    }
+    
+    pub fn set_reset_coverage(&mut self, reset: bool) {
+        self.reset_coverage = reset;
     }
 }
 
@@ -22,8 +34,21 @@ impl Interpreter for BasicRSInterpreter {
     async fn launch(&mut self, program_path: &str) -> Result<()> {
         log::info!("Launching BasicRS interpreter with program: {}", program_path);
         
-        // Launch the BasicRS interpreter with the program
-        self.subprocess.spawn_process(&self.basicrs_path, &[program_path]).await?;
+        // Build arguments for BasicRS
+        let mut args = vec![program_path];
+        
+        // Add coverage arguments if specified
+        if let Some(ref coverage_file) = self.coverage_file {
+            args.push("--coverage-file");
+            args.push(coverage_file);
+        }
+        
+        if self.reset_coverage {
+            args.push("--reset-coverage");
+        }
+        
+        // Launch the BasicRS interpreter with the program and arguments
+        self.subprocess.spawn_process(&self.basicrs_path, &args).await?;
         
         // Read initial output until we get a prompt
         let _initial_output = self.read_until_prompt().await?;

@@ -13,6 +13,7 @@ use interpreter::{
 };
 use player::{GameStats, Player};
 use strategy::{CheatStrategy, RandomStrategy};
+use std::fs;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -42,7 +43,7 @@ enum Commands {
         display: bool,
         
         /// Maximum number of turns
-        #[arg(short, long, default_value_t = 1000)]
+        #[arg(short, long, default_value_t = 100)]
         max_turns: usize,
         
         /// Path to BasicRS executable
@@ -89,7 +90,7 @@ enum Commands {
         display: bool,
         
         /// Maximum number of turns per game
-        #[arg(short, long, default_value_t = 1000)]
+        #[arg(short, long, default_value_t = 100)]
         max_turns: usize,
         
         /// Path to BasicRS executable
@@ -111,6 +112,10 @@ enum Commands {
         /// Path to TrekBasicJ JAR
         #[arg(long)]
         trekbasicj_path: Option<String>,
+        
+        /// Enable coverage tracking and save to file
+        #[arg(long)]
+        coverage_file: Option<String>,
     },
 }
 
@@ -175,6 +180,7 @@ async fn main() -> Result<()> {
             trekbasic_path,
             java_path,
             trekbasicj_path,
+            coverage_file,
         } => {
             run_benchmark(
                 program,
@@ -188,6 +194,7 @@ async fn main() -> Result<()> {
                 trekbasic_path,
                 java_path,
                 trekbasicj_path,
+                coverage_file,
             )
             .await?;
         }
@@ -280,8 +287,11 @@ async fn run_benchmark(
     trekbasic_path: &Option<String>,
     java_path: &Option<String>,
     trekbasicj_path: &Option<String>,
+    coverage_file: &Option<String>,
 ) -> Result<()> {
     let mut stats = GameStats::new();
+    
+    // Coverage will be handled by BasicRS itself
     
     println!("Running {} games with {} interpreter and {} strategy...", 
              games, 
@@ -293,7 +303,14 @@ async fn run_benchmark(
         
         let result = match (interpreter_type, strategy_type) {
             (InterpreterType::BasicRS, StrategyType::Random) => {
-                let interpreter = BasicRSInterpreter::new(basicrs_path.clone());
+                let mut interpreter = BasicRSInterpreter::new(basicrs_path.clone());
+                
+                // Set coverage options if requested
+                if let Some(ref coverage_file) = coverage_file {
+                    interpreter.set_coverage_file(Some(coverage_file.clone()));
+                    interpreter.set_reset_coverage(i == 0); // Reset only on first game
+                }
+                
                 let strategy = RandomStrategy::new();
                 let mut player = Player::new(interpreter, strategy, display);
                 player.set_max_turns(max_turns);
@@ -304,7 +321,14 @@ async fn run_benchmark(
                 result
             }
             (InterpreterType::BasicRS, StrategyType::Cheat) => {
-                let interpreter = BasicRSInterpreter::new(basicrs_path.clone());
+                let mut interpreter = BasicRSInterpreter::new(basicrs_path.clone());
+                
+                // Set coverage options if requested
+                if let Some(ref coverage_file) = coverage_file {
+                    interpreter.set_coverage_file(Some(coverage_file.clone()));
+                    interpreter.set_reset_coverage(i == 0); // Reset only on first game
+                }
+                
                 let strategy = CheatStrategy::new();
                 let mut player = Player::new(interpreter, strategy, display);
                 player.set_max_turns(max_turns);

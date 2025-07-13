@@ -184,8 +184,23 @@ impl SubprocessInterpreter {
     
     pub async fn terminate_impl(&mut self) -> Result<()> {
         if let Some(mut process) = self.process.take() {
-            process.kill().await?;
-            let _ = process.wait().await?;
+            // First try to send a quit command to allow graceful shutdown
+            if let Err(e) = self.write_line("XXX").await {
+                log::debug!("Failed to send quit command: {}", e);
+            }
+            
+            // Wait a bit for graceful shutdown
+            tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+            
+            // Check if process has exited gracefully
+            if let Ok(Some(exit_status)) = process.try_wait() {
+                log::debug!("Process exited gracefully with status: {:?}", exit_status);
+            } else {
+                // Process hasn't exited, kill it
+                log::debug!("Process didn't exit gracefully, killing it");
+                process.kill().await?;
+                let _ = process.wait().await?;
+            }
         }
         self.stdin = None;
         self.stdout = None;

@@ -73,6 +73,10 @@ impl<I: Interpreter, S: Strategy> Player<I, S> {
             if self.is_game_over(&output) {
                 let result = self.determine_game_result(&output);
                 log::info!("Game ended: {:?}", result);
+                // Try to terminate interpreter gracefully to allow coverage data saving
+                if let Err(e) = self.interpreter.terminate().await {
+                    log::warn!("Failed to terminate interpreter gracefully: {}", e);
+                }
                 return Ok(result);
             }
             
@@ -91,6 +95,10 @@ impl<I: Interpreter, S: Strategy> Player<I, S> {
         
         if self.turn_count >= self.max_turns {
             log::warn!("Game ended due to max turns limit");
+            // Try to terminate interpreter gracefully to allow coverage data saving
+            if let Err(e) = self.interpreter.terminate().await {
+                log::warn!("Failed to terminate interpreter gracefully: {}", e);
+            }
             Ok(GameResult::MaxTurnsReached)
         } else {
             log::info!("Game ended - interpreter stopped");
