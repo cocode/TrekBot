@@ -3,11 +3,11 @@ TrekBot is a tool to exercise the vintage computer game 'superstartrek'. It acts
 as a player, and plays repeated games to exercise all corners of the game. 
 
 TrekBot is part of the TrekBasic family of BASIC programming tools.
-* TrekBasic - Python version
-* TrekBasicJ - Java Version
-* BasicRS - Rust version
-* BasicTestSuite - A test suite of BASIC Programs
-* TrekBot - A tool to exercise the superstartrek program
+* [TrekBasic](https://github.com/cocode/TrekBASIC) - Python version
+* [TrekBasicJ](https://github.com/cocode/TrekBasicJ) - Java Version
+* [BasicRS](https://github.com/cocode/BasicRS) - Rust version
+* [BasicTestSuite](https://github.com/cocode/BasicTestSuite) - A test suite of BASIC Programs
+* [TrekBot](https://github.com/cocode/TrekBot) - A tool to exercise the superstartrek program
 
 All versions are intended to by byte-by-byte compatible, but are not
 there yet - but they are close. TrekBot and BasicTestSuite are part of
