@@ -25,3 +25,6 @@
 - [ ] Usage examples for different interpreters
 - [ ] Strategy implementation guide
 - [ ] Performance benchmarks
+
+## Basic Test Suite
+- [ ] Move the Basic Test Suite out of being copies in each project, to using the github project. 
