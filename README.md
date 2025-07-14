@@ -13,9 +13,6 @@ All versions are intended to by byte-by-byte compatible, but are not
 there yet - but they are close. TrekBot and BasicTestSuite are part of the
 plan to verify full compatibility.
 
-TrekBasic and TrekBasicJ are also compilers, and the compatibility
-targets are the same for the compiled versions. A compiler for BasicRS is planned.
-
 ## Running TrekBot
 
 ### To run with coverage:
