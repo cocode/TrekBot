@@ -9,7 +9,7 @@ TrekBot is part of the TrekBasic family of BASIC programming tools.
 * [BasicTestSuite](https://github.com/cocode/BasicTestSuite) - A test suite of BASIC Programs
 * [TrekBot](https://github.com/cocode/TrekBot) - A tool to exercise the superstartrek program
 
-All versions are intended to by byte-by-byte compatible, but are not
+All versions, interpreted and compiled, are intended to by byte-by-byte compatible, but are not
 there yet - but they are close. TrekBot and BasicTestSuite are part of the
 plan to ensure full compatibility.
 
