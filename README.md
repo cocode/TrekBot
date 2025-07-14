@@ -11,7 +11,7 @@ TrekBot is part of the TrekBasic family of BASIC programming tools.
 
 All versions are intended to by byte-by-byte compatible, but are not
 there yet - but they are close. TrekBot and BasicTestSuite are part of the
-plan to verify full compatibility.
+plan to ensure full compatibility.
 
 ## Running TrekBot
 
